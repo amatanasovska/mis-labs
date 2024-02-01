@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:lab345/add_exam_screen.dart';
+import 'package:lab345/exam_list.dart';
 import 'package:lab345/signin.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -44,15 +46,12 @@ class AuthWrapper extends StatelessWidget {
           User? user = snapshot.data;
 
           if (user == null) {
-            // User is not authenticated, redirect to the authentication home page
             return AuthHomePage();
           } else {
-            // User is authenticated, navigate to the home screen or any other screen
             return HomeScreen();
           }
         }
 
-        // Show loading indicator or splash screen while checking authentication state
         return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
@@ -66,14 +65,24 @@ class AuthWrapper extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Implement your main app logic here
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Screen'),
+        title: Text('Exam Schedule App'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddExamScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      body: Center(
-        child: Text('Welcome to the Exam Schedule App!'),
-      ),
+      body: ExamList(),
     );
   }
 }
