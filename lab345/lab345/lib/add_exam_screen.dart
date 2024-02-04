@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lab345/notification_service.dart';
 
 class AddExamScreen extends StatefulWidget {
   @override
@@ -97,6 +98,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
                       'time': time,
                     });
                     print('After adding to Firestore');
+                    await NotificationService().showNotification("Here");
 
                     Navigator.pop(context);
                   } catch (e) {

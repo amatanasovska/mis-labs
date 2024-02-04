@@ -1,7 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:timezone/timezone.dart' as tz;
+
 
 class CalendarWidget extends StatefulWidget {
   @override
@@ -14,6 +18,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   DateTime? _selectedDay;
 
   Map<DateTime, List<String>> _events = {};
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin(); 
 
   @override
   void initState() {
@@ -21,9 +27,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     _fetchEvents();
   }
 
-  Future<void> _fetchEvents() async {
-    final User? user = FirebaseAuth.instance.currentUser;
+
+  Future<void> _fetchEvents({bool scheduleNotif = true}) async {
     _events = {};
+    final User? user = FirebaseAuth.instance.currentUser;
+
     final QuerySnapshot<Map<String, dynamic>> exams = await FirebaseFirestore.instance
         .collection('exams')
         .where('user', isEqualTo: user!.uid)
@@ -33,7 +41,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       final DateTime date = DateTime.parse(
         exam['date'].replaceAllMapped(
           RegExp(r'(\d+)-(\d+)-(\d+)'),
-          (match) => '${match[1].padLeft(2, '0')}-${match[2].padLeft(2, '0')}-${match[3].padLeft(2, '0')}',
+          (match) =>
+              '${match[1].padLeft(2, '0')}-${match[2].padLeft(2, '0')}-${match[3].padLeft(2, '0')}',
         ),
       );
       final String eventName = exam['name'];
@@ -70,7 +79,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             });
           },
           onDaySelected: (selectedDay, focusedDay) async {
-            await _fetchEvents();
+            await _fetchEvents(scheduleNotif: false);
             setState(() {
               _selectedDay = selectedDay;
               _focusedDay = focusedDay;

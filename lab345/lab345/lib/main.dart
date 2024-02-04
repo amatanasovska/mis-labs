@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:lab345/add_exam_screen.dart';
 import 'package:lab345/calendar_widget.dart';
 import 'package:lab345/exam_list.dart';
+import 'package:lab345/notification_service.dart';
 import 'package:lab345/signin.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -17,8 +19,15 @@ void main() async {
   await Firebase.initializeApp(  
     options: DefaultFirebaseOptions.android,
   );
+  
+  await NotificationService().init(); 
+
   runApp(MyApp());
 }
+
+
+  
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
