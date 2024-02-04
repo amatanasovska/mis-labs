@@ -87,7 +87,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           },
           eventLoader: (day) => _getEventsForDay(day),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         if (_selectedDay != null)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +96,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 'Events for ${_selectedDay!.day} - ${_selectedDay!.month} - ${_selectedDay!.year}',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+                const SizedBox(),
               ..._getEventsForDay(_selectedDay!).map(
                 (event) => ListTile(
                   title: Text(event),

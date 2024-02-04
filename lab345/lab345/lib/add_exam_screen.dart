@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:lab345/notification_service.dart';
 
 class AddExamScreen extends StatefulWidget {
@@ -84,8 +85,8 @@ class _AddExamScreenState extends State<AddExamScreen> {
             ElevatedButton(
               onPressed: () async {
                 final String name = nameController.text.trim();
-                final String date = dateController.text.trim();
-                final String time = timeController.text.trim();
+                String date = dateController.text.trim();
+                String time = timeController.text.trim();
                 if (name.isNotEmpty && date.isNotEmpty && time.isNotEmpty && user != null && user.uid.isNotEmpty) {
                   try {
                     final String userUid = user.uid;
@@ -98,7 +99,28 @@ class _AddExamScreenState extends State<AddExamScreen> {
                       'time': time,
                     });
                     print('After adding to Firestore');
-                    await NotificationService().showNotification("Here");
+
+                    // Combine date and time strings
+                    date = date.replaceAllMapped(
+                      RegExp(r'(\d+)-(\d+)-(\d+)'),
+                      (match) => '${match[1]!.padLeft(2, '0')}-${match[2]!.padLeft(2, '0')}-${match[3]!.padLeft(2, '0')}',
+                    );
+                    var parts = time.split(" ");
+
+                    time = "${parts[0]}:00 ${parts[1]}";
+
+                    print("DATE $date");
+                    String dateTimeString = "$date $time";
+
+                    // Parse the combined date and time string into a DateTime object
+                    DateTime dateTime = DateFormat("yyyy-MM-dd hh:mm:ss a").parse(dateTimeString);
+                    
+                    Duration difference = dateTime.difference(DateTime.now());
+
+                    int secondsDifference = difference.inSeconds;
+
+                    await NotificationService().scheduleNotification("Event $name happening now.", 
+                      secondsDifference);
 
                     Navigator.pop(context);
                   } catch (e) {

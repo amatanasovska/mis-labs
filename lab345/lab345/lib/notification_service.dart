@@ -1,5 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:ffi';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   static final NotificationService _notificationService =
@@ -30,6 +34,30 @@ class NotificationService {
         payload: 'data');
   }
 
+  Future<void> scheduleNotification(String content,int inSeconds) async
+  {
+    if (await Permission.ignoreBatteryOptimizations.request().isGranted) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        12345,
+        "Exam app",
+        content,
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: inSeconds)),
+        NotificationDetails(android: androidPlatformChannelSpecifics),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);  } 
+      else {
+        var status = await Permission.ignoreBatteryOptimizations.request();
+
+          if (status.isGranted) {
+            print('Permission granted');
+          } else {
+            print('Permission not granted');
+          }
+        }
+    
+  }
+  
   Future selectNotification(String? payload) async {
     // Handle notification tapped logic here
   }
@@ -55,6 +83,8 @@ class NotificationService {
             android: initializationSettingsAndroid,
             iOS: initializationSettingsIOS,
             macOS: null);
+    
+    tz.initializeTimeZones();  // <------
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: selectNotification);
   }
