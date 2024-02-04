@@ -63,8 +63,11 @@ class AuthWrapper extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Exam Schedule App'),
@@ -78,6 +81,12 @@ class HomeScreen extends StatelessWidget {
                   builder: (context) => AddExamScreen(),
                 ),
               );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await authService.signOut();
             },
           ),
         ],

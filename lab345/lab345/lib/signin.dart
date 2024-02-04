@@ -82,7 +82,12 @@ class SignInScreen extends StatelessWidget {
                         .signInWithEmailAndPassword(email, password);
 
                 if (result == null) {
-                  HomeScreen();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
                 } else {
                   // Show an error message
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -136,7 +141,12 @@ class SignUpScreen extends StatelessWidget {
                         .signUpWithEmailAndPassword(email, password);
 
                 if (result == null) {
-                    HomeScreen();
+                    Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
                 } else {
                   // Show an error message
                   ScaffoldMessenger.of(context).showSnackBar(
