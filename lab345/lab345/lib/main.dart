@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:lab345/add_exam_screen.dart';
+import 'package:lab345/calendar_widget.dart';
 import 'package:lab345/exam_list.dart';
 import 'package:lab345/signin.dart';
 import 'package:provider/provider.dart';
@@ -63,11 +64,8 @@ class AuthWrapper extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Exam Schedule App'),
@@ -86,12 +84,19 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
-              await authService.signOut();
+              await Provider.of<AuthService>(context, listen: false).signOut();
             },
           ),
         ],
       ),
-      body: ExamList(),
+      body: Column(
+        children: [
+          CalendarWidget(),
+          Expanded(
+            child: ExamList(),
+          ),
+        ],
+      ),
     );
   }
 }
