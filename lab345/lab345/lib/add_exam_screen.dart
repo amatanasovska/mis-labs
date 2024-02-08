@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:lab345/notification_service.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AddExamScreen extends StatefulWidget {
   @override
@@ -13,6 +14,24 @@ class _AddExamScreenState extends State<AddExamScreen> {
   final TextEditingController nameController = TextEditingController();
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+
+  double? currentLatitude;
+  double? currentLongitude;
+
+  Future<void> _getLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        currentLatitude = position.latitude;
+        currentLongitude = position.longitude;
+      });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -84,6 +103,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
+                await _getLocation();
                 final String name = nameController.text.trim();
                 String date = dateController.text.trim();
                 String time = timeController.text.trim();
@@ -97,7 +117,10 @@ class _AddExamScreenState extends State<AddExamScreen> {
                       'name': name,
                       'date': date,
                       'time': time,
+                      'latitude': currentLatitude,
+                      'longitude': currentLongitude
                     });
+
                     print('After adding to Firestore');
 
                     // Combine date and time strings

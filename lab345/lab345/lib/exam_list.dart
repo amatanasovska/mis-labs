@@ -49,6 +49,8 @@ class ExamList extends StatelessWidget {
               subject: exam['name'],
               date: exam['date'],
               time: exam['time'],
+              latitude: exam['latitude'],
+              longitude: exam['longitude'],
             );
           },
         );
